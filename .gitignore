@@ -1,0 +1,8 @@
+*.err
+*.log
+*.rej
+*.swo
+*.swp
+*.zip
+*.vi
+*~

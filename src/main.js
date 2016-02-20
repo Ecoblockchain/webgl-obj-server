@@ -1,0 +1,200 @@
+
+var camera
+var renderer
+var offset
+var $container
+var controls
+var stats
+
+var winWidth = window.innerWidth
+var winHeight = window.innerHeight
+var viewRatio = winWidth/winHeight
+
+var rinit = 1000
+
+var pixelRatio = window.devicePixelRatio || 1
+var viewWinWidth = 2.2*rinit
+var viewWinHeight = viewWinWidth / viewRatio
+console.log('screen ratio', viewRatio, viewWinWidth, viewWinHeight)
+
+
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+// requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
+// MIT license
+;(function() {
+    var lastTime = 0
+    var vendors = ['ms', 'moz', 'webkit', 'o']
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame']
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] ||
+          window[vendors[x]+'CancelRequestAnimationFrame']
+    }
+
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime()
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime))
+            var id = window.setTimeout(function() { callback(currTime + timeToCall) },
+              timeToCall)
+            lastTime = currTime + timeToCall
+            return id
+        }
+
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id)
+        }
+}())
+
+;(function() {
+  var timer_id
+  $(window).resize(function() {
+      clearTimeout(timer_id)
+      timer_id = setTimeout(function() {
+        windowAdjust()
+      }, 300)
+  })
+}())
+
+function windowAdjust() {
+
+  winWidth = window.innerWidth
+  winHeight = window.innerHeight
+  offset = $container.offset()
+  pixelRatio = window.devicePixelRatio || 1
+
+  renderer.setPixelRatio(pixelRatio)
+  renderer.setSize(winWidth,winHeight)
+
+  camera.aspect = winWidth/winHeight
+  camera.updateProjectionMatrix()
+
+  console.log('window', winWidth,winHeight)
+  console.log('pixel ratio', pixelRatio)
+
+  viewRatio = window.innerWidth/window.innerHeight
+  viewWinWidth = 2*rinit
+  viewWinHeight = viewWinHeight / viewRatio
+  console.log('screen ratio', viewRatio, viewWinWidth, viewWinHeight)
+}
+
+$(document).ready(function(){
+
+  if (!Detector.webgl){
+    Detector.addGetWebGLMessage()
+  }
+
+  console.log('start')
+
+  $container = $('#box')
+
+  renderer = new THREE.WebGLRenderer({
+    alpha: true,
+    preserveDrawingBuffer: false
+  })
+  renderer.autoClear = true
+  $container.append(renderer.domElement)
+
+  camera = new THREE.PerspectiveCamera(
+    40,
+    winWidth/winHeight,
+    1,
+    20000
+  )
+
+  scene = new THREE.Scene()
+
+  var camTarget = new THREE.Vector3(0,0,0)
+  var camStart = new THREE.Vector3(20,20,20)
+  camera.position.x = camStart.x
+  camera.position.y = camStart.y
+  camera.position.z = camStart.z
+  camera.lookAt(camTarget)
+
+  camera.aspect = viewRatio
+  camera.updateProjectionMatrix()
+
+  renderer.setPixelRatio(pixelRatio)
+  renderer.setSize(winWidth,winHeight)
+
+  scene.add(camera)
+
+  controls = new THREE.OrbitControls(camera)
+  if (controls){
+    controls.rotateSpeed = 1.0
+    controls.zoomSpeed = 1.2
+    controls.panSpeed = 1.0
+    controls.noZoom = false
+    controls.noPan = false
+    //controls.autoRotate = true
+    controls.staticMoving = true
+    controls.dynamicDampingFactor = 0.3
+    controls.keys = [65,83,68]
+    controls.target.x = camTarget.x
+    controls.target.y = camTarget.y
+    controls.target.z = camTarget.z
+  }
+
+  var normalMat = new THREE.MeshNormalMaterial()
+  normalMat.side = THREE.DoubleSide
+
+  var basicMat = new THREE.MeshBasicMaterial({
+      color: 0x00EEEE
+  })
+  basicMat.side = THREE.DoubleSide
+
+  windowAdjust()
+
+  var loader = new THREE.OBJLoader()
+
+  loader.load(
+    'models/test.obj',
+    function (obj) {
+      obj.children.forEach(function(m){
+        var scale = 10
+        var geom = m.geometry
+        geom.computeBoundingSphere()
+        geom.computeFaceNormals()
+        geom.computeVertexNormals()
+        var center = geom.boundingSphere.center
+        //geom.scale = new THREE.Vector3(3,3,3)
+        mesh = new THREE.Mesh(geom, normalMat)
+        mesh.position.x -= center.x*scale
+        mesh.position.y -= center.y*scale
+        mesh.position.z -= center.z*scale
+        mesh.scale.x = scale
+        mesh.scale.y = scale
+        mesh.scale.z = scale
+        mesh.frustumCulled = false
+        console.log(mesh)
+        scene.add(mesh)
+        //camera.lookAt(center)
+      })
+    }
+  )
+
+  var itt = 0.0
+  function animate(){
+
+    itt += 1.0
+
+    if (itt%10===0){
+      console.log(itt)
+    }
+
+    if (controls){
+      controls.update()
+    }
+    if (stats){
+      stats.update()
+    }
+
+    renderer.render(scene, camera)
+    window.requestAnimationFrame(animate)
+
+  }
+
+  animate()
+})
+
