@@ -47,6 +47,7 @@ console.log('screen ratio', viewRatio, viewWinWidth, viewWinHeight)
         }
 }())
 
+
 ;(function() {
   var timer_id
   $(window).resize(function() {
@@ -56,6 +57,7 @@ console.log('screen ratio', viewRatio, viewWinWidth, viewWinHeight)
       }, 300)
   })
 }())
+
 
 function windowAdjust() {
 
@@ -139,40 +141,13 @@ $(document).ready(function(){
   var normalMat = new THREE.MeshNormalMaterial()
   normalMat.side = THREE.DoubleSide
 
-  var basicMat = new THREE.MeshBasicMaterial({
-      color: 0x00EEEE
-  })
-  basicMat.side = THREE.DoubleSide
+  //var basicMat = new THREE.MeshBasicMaterial({
+      //color: 0x00EEEE
+  //})
+  //basicMat.side = THREE.DoubleSide
 
   windowAdjust()
-
-  var loader = new THREE.OBJLoader()
-
-  loader.load(
-    'models/test.obj',
-    function (obj) {
-      obj.children.forEach(function(m){
-        var scale = 10
-        var geom = m.geometry
-        geom.computeBoundingSphere()
-        geom.computeFaceNormals()
-        geom.computeVertexNormals()
-        var center = geom.boundingSphere.center
-        //geom.scale = new THREE.Vector3(3,3,3)
-        mesh = new THREE.Mesh(geom, normalMat)
-        mesh.position.x -= center.x*scale
-        mesh.position.y -= center.y*scale
-        mesh.position.z -= center.z*scale
-        mesh.scale.x = scale
-        mesh.scale.y = scale
-        mesh.scale.z = scale
-        mesh.frustumCulled = false
-        console.log(mesh)
-        scene.add(mesh)
-        //camera.lookAt(center)
-      })
-    }
-  )
+  loadobj('models/test2.obj', scene, normalMat)
 
   var itt = 0.0
   function animate(){

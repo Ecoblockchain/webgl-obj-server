@@ -87,6 +87,15 @@ strong { font-weight: bold; }
   width: 350px;
   opacity: 0.9;
 }
+.message2 {
+  bottom: 0px;
+  left: 0px;
+  position: absolute;
+  padding: 10px;
+  text-align: left;
+  width: 350px;
+  opacity: 0.9;
+}
 hr{
   color: #000;
 }
@@ -97,6 +106,13 @@ hr{
   text-align: center;
   margin: 0 auto;
 }
+
+#staus {
+  position: absolute;
+  color: black;
+  left: 0px;
+}
+
 a, a.active, a.visited, a.hover{
   color: #000;
   text-decoration: none;
@@ -109,10 +125,19 @@ a, a.active, a.visited, a.hover{
 <script src="lib/stats.min.js"></script>
 <script src="lib/OrbitControls.js"></script>
 <script src="lib/OBJLoader.js"></script>
+<script src="src/utils.js"></script>
 
 </head>
 <body>
-  <div class="content"><div id='box'></div></div>
+  <div class="content">
+  <div class="message">
+    no model loaded.
+  </div>
+  <div class="message2">
+      <a href="http://inconvergent.net">inconvergent.net</a>
+  </div>
+    <div id='box'></div>
+  </div>
 <script src="src/main.js"></script>
 </body>
 </html>
