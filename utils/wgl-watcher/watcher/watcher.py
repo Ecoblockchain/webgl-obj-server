@@ -14,7 +14,7 @@ class Watcher(object):
 
   def __init__(self, location='.'):
     self.location = location
-    self.leap = 1
+    self.leap = 30
     self.pwd = self.__get_pwd()
     self.time = time()
 
