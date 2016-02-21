@@ -39,7 +39,7 @@ def main(args):
   print(args)
   try:
     with Watcher() as w:
-      res = w.watch()
+      w.watch()
 
   except Exception as e:
     print(e, file=stderr)

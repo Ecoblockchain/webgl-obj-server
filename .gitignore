@@ -6,3 +6,5 @@
 *.zip
 *.vi
 *~
+*watcher.egg-info*
+*.pyc
