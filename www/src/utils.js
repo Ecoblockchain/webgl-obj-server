@@ -4,6 +4,14 @@ utils.objs = []
 utils.index = {}
 utils.cur = 0
 
+function dearLordKillMeNow(){
+  var now = new Date()
+  var now_utc = new Date(now.getUTCFullYear(), now.getUTCMonth(),
+                         now.getUTCDate(),  now.getUTCHours(),
+                         now.getUTCMinutes(), now.getUTCSeconds())
+  return new Date(now_utc.toJSON())
+}
+
 utils.loadObj = function loadObj(url, viewer){
   var scale = 10
 
@@ -15,8 +23,20 @@ utils.loadObj = function loadObj(url, viewer){
     url,
     function(obj){
 
-      var which = (utils.cur+1)+ '/' + utils.tot
-      $('.message').html(which + ': ' + url)
+      //var seconds = (new Date(new Date().toUTCString()) -
+                     //Date.parse(utils.index.updated))/1000.0
+      //var seconds = (new Date(new Date().toUTCString()) - Date.parse(utils.index.updated))/1000
+
+      //console.log(new Date(new Date().toUTCString()))
+      //console.log(Date.parse(utils.index.updated))
+
+            //(new Date(new Date().toUTCString()) - Date.parse("2016/02/21 17:14:12.47 GMT"))/1000
+      var seconds = (dearLordKillMeNow()-Date.parse(utils.index.updated))/1000.0
+
+      var which = (utils.cur+1)+ '/' + utils.tot + ' (' +
+        seconds.toFixed(0) + 's since last update)'
+
+      $('.message').html(which)
 
       obj.children.forEach(function(m){
         var geom = m.geometry
@@ -56,14 +76,12 @@ utils.updateIndex = function updateIndex(url, viewer){
 }
 
 utils.nextModel = function nextModel(viewer){
-
   console.log('next model')
   var newCur = utils.cur + 1
   if (newCur>=utils.tot){
     console.log('viewing most recent')
     return
   }
-
   var file = utils.index.files[newCur]
   utils.cur = newCur
   utils.loadObj('models/'+file, viewer)
@@ -77,7 +95,6 @@ utils.prevModel = function prevModel(viewer){
     console.log('no older models')
     return
   }
-
   var file = utils.index.files[newCur]
   utils.cur = newCur
   utils.loadObj('models/'+file, viewer)

@@ -14,7 +14,7 @@ class Watcher(object):
 
   def __init__(self, location='.'):
     self.location = location
-    self.leap = 30
+    self.leap = 5
     self.pwd = self.__get_pwd()
     self.time = time()
 
@@ -23,8 +23,6 @@ class Watcher(object):
       '. ubuntu@livegen.inconvergent.net:~/models/'
 
     self.current = set(self.__get_current())
-    self.__make_index_json()
-    self.__rsync()
 
   def __enter__(self):
     return self
@@ -38,8 +36,13 @@ class Watcher(object):
 
   def __get_time_str(self, utc=False):
     from datetime import datetime
-    tf = '%Y%m%d-%H:%M:%S.%f'
-    return datetime.now().strftime(tf)
+    if utc:
+      # trololllol ...
+      tf = '%Y/%m/%d %H:%M:%S.%f (UTC)'
+      return datetime.utcnow().strftime(tf)
+    else:
+      tf = '%Y/%m/%d %H:%M:%S.%f'
+      return datetime.now().strftime(tf)
 
   def __get_current(self, postfix='.obj'):
     from glob import glob
@@ -64,8 +67,10 @@ class Watcher(object):
 
     jsn = {
       'files': files,
-      'recent': files[-1]
+      'recent': files[-1],
+      'updated': self.__get_time_str(utc=True)
     }
+
     with open('index.json', 'w') as f:
       dump(jsn, f, indent=indent)
 
@@ -88,7 +93,12 @@ class Watcher(object):
         'fn: could not sync'
       )
 
-  def watch(self):
+  def watch(self, remote=False):
+
+    self.__make_index_json()
+
+    if remote:
+      self.__rsync()
 
     try:
       while True:
@@ -99,7 +109,8 @@ class Watcher(object):
         if not same:
           self.__msg('updating index, diff: {:d}'.format(diff))
           self.__make_index_json()
-          self.__rsync()
+          if remote:
+            self.__rsync()
 
         sleep(self.leap)
     except KeyboardInterrupt:

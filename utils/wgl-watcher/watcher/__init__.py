@@ -5,14 +5,16 @@
 
 Usage:
   wgl-watcher
+  wgl-watcher --remote
   wgl-watcher -h
   wgl-watcher -v
 
 Examples:
 
-  wgl-watcher  Watch current folder for changes.
-  -h           Show this screen.
-  -v           Show version.
+  wgl-watcher           Watch current folder for changes.
+  wgl-watcher  --remote Watch current folder for changes and push to remote.
+  -h                    Show this screen.
+  -v                    Show version.
 """
 
 
@@ -36,10 +38,14 @@ def main(args):
   from sys import stderr
   from sys import exit
 
-  print(args)
+  # print(args)
   try:
-    with Watcher() as w:
-      w.watch()
+    if args['--remote']:
+      with Watcher() as w:
+        w.watch(remote=True)
+    else:
+      with Watcher() as w:
+        w.watch(remote=False)
 
   except Exception as e:
     print(e, file=stderr)
