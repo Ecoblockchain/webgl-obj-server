@@ -108,7 +108,7 @@ $(document).ready(function(){
   scene = new THREE.Scene()
 
   var camTarget = new THREE.Vector3(0,0,0)
-  var camStart = new THREE.Vector3(10,10,10)
+  var camStart = new THREE.Vector3(7,7,7)
   camera.position.x = camStart.x
   camera.position.y = camStart.y
   camera.position.z = camStart.z
