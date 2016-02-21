@@ -147,17 +147,22 @@ $(document).ready(function(){
   //basicMat.side = THREE.DoubleSide
 
   windowAdjust()
-  loadobj('models/test2.obj', scene, normalMat)
+  //loadObj('models/test2.obj', scene, normalMat)
+  //getModelIndex('models/index.json')
+  var viewer = {
+    material: normalMat,
+    scene: scene
+  }
+  utils.updateIndex('models/index.json', viewer)
 
   var itt = 0.0
   function animate(){
 
     itt += 1.0
 
-    if (itt%10===0){
+    if (itt%50===0){
       console.log(itt)
     }
-
     if (controls){
       controls.update()
     }

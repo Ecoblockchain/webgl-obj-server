@@ -1,14 +1,16 @@
+var utils = {}
+utils.loader = new THREE.OBJLoader()
+utils.objs = []
+utils.index = {}
 
-var loader = new THREE.OBJLoader()
-var objs = []
-function loadobj(url, scene, material){
+utils.loadObj = function loadObj(url, viewer){
   var scale = 10
 
-  objs.forEach(function(obj){
+  utils.objs.forEach(function(obj){
     scene.remove(obj)
   })
 
-  loader.load(
+  utils.loader.load(
     url,
     function (obj) {
       obj.children.forEach(function(m){
@@ -17,7 +19,7 @@ function loadobj(url, scene, material){
         geom.computeFaceNormals()
         geom.computeVertexNormals()
         var center = geom.boundingSphere.center
-        mesh = new THREE.Mesh(geom, material)
+        mesh = new THREE.Mesh(geom, viewer.material)
 
         mesh.position.x -= center.x*scale
         mesh.position.y -= center.y*scale
@@ -30,9 +32,21 @@ function loadobj(url, scene, material){
 
         mesh.frustumCulled = false
         console.log(mesh)
-        scene.add(mesh)
-        objs.push(mesh)
+        viewer.scene.add(mesh)
+        utils.objs.push(mesh)
       })
     }
   )
+}
+
+utils.updateIndex = function updateIndex(url, viewer){
+  $.ajax({
+  dataType: "json",
+  url: url,
+  success: function(data){
+      utils.index = data
+      utils.loadObj('models/'+data.recent, viewer)
+    }
+  })
+
 }
