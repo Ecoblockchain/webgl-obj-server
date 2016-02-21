@@ -43,7 +43,7 @@ class Watcher(object):
 
   def __get_current(self, postfix='.obj'):
     from glob import glob
-    current = glob('./*{:s}'.format(postfix))
+    current = glob('*{:s}'.format(postfix))
     return current
 
   def __compare_update(self, postfix='.obj'):

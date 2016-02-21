@@ -155,6 +155,24 @@ $(document).ready(function(){
   }
   utils.updateIndex('models/index.json', viewer)
 
+  $(document).keydown(function(e) {
+    switch(e.which) {
+        //case 38: // up
+        //break;
+        //case 40: // down
+        //break;
+        case 37: // left
+          utils.prevModel(viewer)
+        break
+
+        case 39: // right
+          utils.nextModel(viewer)
+        break
+        default: return // exit this handler for other keys
+    }
+    e.preventDefault(); // prevent the default action (scroll / move caret)
+});
+
   var itt = 0.0
   function animate(){
 
