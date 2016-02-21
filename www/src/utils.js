@@ -15,7 +15,7 @@ utils.loadObj = function loadObj(url, viewer){
     url,
     function(obj){
 
-      var which = utils.tot + '/' + utils.tot
+      var which = (utils.cur+1)+ '/' + utils.tot
       $('.message').html(which + ': ' + url)
 
       obj.children.forEach(function(m){
