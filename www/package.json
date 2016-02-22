@@ -1,0 +1,27 @@
+{
+    "author": "@inconvergent",
+    "bugs": {
+        "url": "https://github.com/inconvergent/webgl-obj-server/issues"
+    },
+    "dependencies": {
+        "babel-preset-es2015": "^6.5.0",
+        "babel-preset-react": "^6.5.0"
+    },
+    "description": "",
+    "devDependencies": {
+      "babel-cli": "latest"
+    },
+    "homepage": "https://github.com/inconvergent/webgl-obj-server#readme",
+    "license": "MIT",
+    "main": "index.js",
+    "name": "webgl-obj-server",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/inconvergent/webgl-obj-server.git"
+    },
+    "scripts": {
+        "dev": "babel --presets es2015,react --watch jsx/ --out-dir src/",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "version": "0.0.1"
+}

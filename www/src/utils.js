@@ -1,102 +1,57 @@
-var utils = {}
-utils.loader = new THREE.OBJLoader()
-utils.objs = []
-utils.index = {}
-utils.cur = 0
+'use strict';
 
-function dearLordKillMeNow(){
-  var now = new Date()
-  var now_utc = new Date(now.getUTCFullYear(), now.getUTCMonth(),
-                         now.getUTCDate(),  now.getUTCHours(),
-                         now.getUTCMinutes(), now.getUTCSeconds())
-  return new Date(now_utc.toJSON())
-}
-
-utils.loadObj = function loadObj(url, viewer){
-  var scale = 10
-
-  utils.objs.forEach(function(obj){
-    scene.remove(obj)
-  })
-
-  utils.loader.load(
-    url,
-    function(obj){
-
-      //var seconds = (new Date(new Date().toUTCString()) -
-                     //Date.parse(utils.index.updated))/1000.0
-      //var seconds = (new Date(new Date().toUTCString()) - Date.parse(utils.index.updated))/1000
-
-      //console.log(new Date(new Date().toUTCString()))
-      //console.log(Date.parse(utils.index.updated))
-
-            //(new Date(new Date().toUTCString()) - Date.parse("2016/02/21 17:14:12.47 GMT"))/1000
-      var seconds = (dearLordKillMeNow()-Date.parse(utils.index.updated))/1000.0
-
-      var which = (utils.cur+1)+ '/' + utils.tot + ' (' +
-        seconds.toFixed(0) + 's since last update)'
-
-      $('.message').html(which)
-
-      obj.children.forEach(function(m){
-        var geom = m.geometry
-        geom.computeBoundingSphere()
-        geom.computeFaceNormals()
-        geom.computeVertexNormals()
-        var center = geom.boundingSphere.center
-        mesh = new THREE.Mesh(geom, viewer.material)
-
-        mesh.position.x -= center.x*scale
-        mesh.position.y -= center.y*scale
-        mesh.position.z -= center.z*scale
-        mesh.scale.x = scale
-        mesh.scale.y = scale
-        mesh.scale.z = scale
-        mesh.frustumCulled = false
-        console.log(mesh)
-        viewer.scene.add(mesh)
-        utils.objs.push(mesh)
-      })
-    }
-  )
-}
-
-utils.updateIndex = function updateIndex(url, viewer){
-  $.ajax({
-  dataType: "json",
-  url: url,
-  success: function(data){
-      utils.index = data
-      var tot = data.files.length
-      utils.tot = tot
-      utils.cur = tot-1
-      utils.loadObj('models/'+data.recent, viewer)
-    }
-  })
-}
-
-utils.nextModel = function nextModel(viewer){
-  console.log('next model')
-  var newCur = utils.cur + 1
-  if (newCur>=utils.tot){
-    console.log('viewing most recent')
-    return
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+// requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
+// MIT license
+;(function () {
+  var lastTime = 0;
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+  for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+    window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+    window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
   }
-  var file = utils.index.files[newCur]
-  utils.cur = newCur
-  utils.loadObj('models/'+file, viewer)
 
+  if (!window.requestAnimationFrame) window.requestAnimationFrame = function (callback, element) {
+    var currTime = new Date().getTime();
+    var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+    var id = window.setTimeout(function () {
+      callback(currTime + timeToCall);
+    }, timeToCall);
+    lastTime = currTime + timeToCall;
+    return id;
+  };
+
+  if (!window.cancelAnimationFrame) window.cancelAnimationFrame = function (id) {
+    clearTimeout(id);
+  };
+})();
+
+//;(function() {
+//var timer_id
+//$(window).resize(function() {
+//clearTimeout(timer_id)
+//timer_id = setTimeout(function() {
+//windowAdjust()
+//}, 300)
+//})
+//}())
+
+function Get(url, success) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", url, true);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var j = JSON.parse(xhr.responseText);
+        success(j);
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.onerror = function (e) {
+    console.error(xhr.statusText);
+  };
+  xhr.send(null);
 }
-
-utils.prevModel = function prevModel(viewer){
-  console.log('prev model')
-  var newCur = utils.cur - 1
-  if (utils.cur<=0){
-    console.log('no older models')
-    return
-  }
-  var file = utils.index.files[newCur]
-  utils.cur = newCur
-  utils.loadObj('models/'+file, viewer)
-}
-

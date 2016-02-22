@@ -34,6 +34,9 @@ class Watcher(object):
     from os import environ
     return environ['PWD']
 
+  def __get_epoch(self):
+    return time()
+
   def __get_time_str(self, utc=False):
     from datetime import datetime
     if utc:
@@ -68,7 +71,7 @@ class Watcher(object):
     jsn = {
       'files': files,
       'recent': files[-1],
-      'updated': self.__get_time_str(utc=True)
+      'updated': self.__get_epoch()
     }
 
     with open('index.json', 'w') as f:
