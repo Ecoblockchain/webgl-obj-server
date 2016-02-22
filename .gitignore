@@ -9,3 +9,4 @@
 *watcher.egg-info*
 *.pyc
 *.obj
+node_modules
