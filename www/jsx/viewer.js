@@ -29,7 +29,7 @@ ViewerUtils.makeViewer = () => {
     40,
     win.width/win.height,
     1,
-    20
+    50
   )
 
   let scene = new THREE.Scene()
@@ -76,8 +76,8 @@ ViewerUtils.makeViewer = () => {
   //let fog = new THREE.Fog(0xffffff, 5, 30)
 
   let hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1.0 )
-  hemiLight.color.setHSL(0.5, 0.0, 0.3)
-  hemiLight.groundColor.setHSL(0.5, 1, 0.3)
+  hemiLight.color.setHSL(0.55, 0.72, 0.5)
+  hemiLight.groundColor.setHSL(0.0, 0.0, 0.31)
   hemiLight.position.set(0, 10, 0)
   scene.add(hemiLight)
 
@@ -100,7 +100,7 @@ ViewerUtils.loader = new THREE.OBJLoader()
 
 ViewerUtils.loadObj = function loadObj(url, viewer, scale){
 
-  scale = scale || 10
+  scale = scale || 20
 
   ViewerUtils.loader.load(
     url,

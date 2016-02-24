@@ -1,4 +1,3 @@
-/* jshint ignore:start */
 
 let Viewer = React.createClass({
   getInitialState: () => ({
@@ -140,4 +139,3 @@ ReactDOM.render(
     document.getElementById('container')
 );
 
-/* jshint ignore:start */

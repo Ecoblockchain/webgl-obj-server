@@ -1,7 +1,5 @@
 'use strict';
 
-/* jshint ignore:start */
-
 var Viewer = React.createClass({
   displayName: 'Viewer',
 
@@ -169,5 +167,3 @@ var App = React.createClass({
 });
 
 ReactDOM.render(React.createElement(App, null), document.getElementById('container'));
-
-/* jshint ignore:start */
